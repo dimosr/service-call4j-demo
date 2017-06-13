@@ -6,29 +6,52 @@
         <h1>ServiceCall-4j Demo Interface</h1>
 
         <h2>Sample requests</h2>
-        <form id="input-form">
-              Input: <input id="input" type="number">
+        <form id="request-form">
+              Input: <input id="request-input" type="number">
               <input type="submit" value="Make request">
         </form>
-        <div>Result: <span id="result"></span></div>
+        <div>Result: <span id="request-result"></span></div>
+
+        <h2>Dependency Configuration</h2>
+        <form id="configuration-form">
+              Introduce failures: <input id="configuration-failures-input" type="checkbox">
+              Response latency in milliseconds: <input id="configuration-latency-input" type="number">
+              <input type="submit" value="Update configuration">
+        </form>
 
         <script>
-            $("#input-form").submit(function( event ) {
-                    var input = $("#input").val();
+            $("#request-form").submit(function( event ) {
+                    var input = $("#request-input").val();
                     $.ajax({
                         url: "http://localhost:8080/ServiceCall4j-Demo/" + input,
                         dataType:'json',
                     })
                     .done(function( data ) {
-                        $("#result").empty();
+                        $("#request-result").empty();
                         if(data.hasOwnProperty("error")) {
-                            $("#result").append("Error!!");
+                            $("#request-result").append("Error!!");
                         } else {
-                            $("#result").append(data.result);
+                            $("#request-result").append(data.result);
                         }
                     });
                     event.preventDefault();
             });
-        </script>
+
+            $("#configuration-form").submit(function( event ) {
+                    var data = {};
+                    data["introduceFailures"] = $("#configuration-failures-input").prop("checked") ? true : false;
+                    data["latencyInMillis"] = $("#configuration-latency-input").val();
+                    $.ajax({
+                        type: "POST",
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        url: "http://localhost:8080/ServiceCall4j-Demo/configure",
+                        data: JSON.stringify(data),
+                    })
+                    event.preventDefault();
+            });
+</script>
     </body>
 </html>

@@ -1,14 +1,28 @@
 package com.dimosr.dependency;
 
-public class RemoteService {
+import org.springframework.stereotype.Component;
 
-    public static int calculateResult(int input) {
-        if(input > 100) {
+@Component
+public class RemoteService {
+    public DependencyConfiguration configuration;
+
+    public RemoteService() {
+        this.configuration = new DependencyConfiguration();
+        this.configuration.setIntroduceFailures(false);
+        this.configuration.setLatencyInMillis(0);
+    }
+
+    public int calculateResult(int input) throws InterruptedException {
+        if(configuration.getIntroduceFailures()) {
             throw new RuntimeException();
-        } else {
-            return input + 42;
         }
 
+        Thread.sleep(configuration.getLatencyInMillis());
+        return input + 42;
+    }
+
+    public void updateConfiguration(final DependencyConfiguration configuration) {
+        this.configuration = configuration;
     }
 
 }
