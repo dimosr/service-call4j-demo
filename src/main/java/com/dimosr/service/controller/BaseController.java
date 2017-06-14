@@ -2,6 +2,8 @@ package com.dimosr.service.controller;
 
 import com.dimosr.dependency.DependencyConfiguration;
 import com.dimosr.dependency.RemoteService;
+import com.dimosr.monitoring.servicecall.GraphiteMetricsCollector;
+import com.dimosr.service.core.MetricsCollector;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.LoggerFactory;

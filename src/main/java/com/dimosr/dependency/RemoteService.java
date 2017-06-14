@@ -2,7 +2,6 @@ package com.dimosr.dependency;
 
 import org.springframework.stereotype.Component;
 
-@Component
 public class RemoteService {
     public DependencyConfiguration configuration;
 
@@ -12,12 +11,17 @@ public class RemoteService {
         this.configuration.setLatencyInMillis(0);
     }
 
-    public int calculateResult(int input) throws InterruptedException {
+    public int calculateResult(int input) {
         if(configuration.getIntroduceFailures()) {
             throw new RuntimeException();
         }
 
-        Thread.sleep(configuration.getLatencyInMillis());
+        try {
+            Thread.sleep(configuration.getLatencyInMillis());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
         return input + 42;
     }
 
