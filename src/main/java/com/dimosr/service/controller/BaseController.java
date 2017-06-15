@@ -4,6 +4,7 @@ import com.dimosr.dependency.DependencyConfiguration;
 import com.dimosr.dependency.RemoteService;
 import com.dimosr.monitoring.servicecall.GraphiteMetricsCollector;
 import com.dimosr.service.core.MetricsCollector;
+import com.dimosr.service.core.ServiceCall;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,9 @@ public class BaseController {
     @Autowired
     RemoteService remoteService;
 
+    @Autowired
+    ServiceCall<Integer, Integer> remoteServiceCall;
+
     private static final String VIEW_INDEX = "index";
     private final static org.slf4j.Logger logger = LoggerFactory.getLogger(BaseController.class);
 
@@ -40,7 +44,7 @@ public class BaseController {
     public String calculateResult(@PathVariable int input, ModelMap model) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            final int result = remoteService.calculateResult(input);
+            final int result = remoteServiceCall.call(input);
             resultMap.put("result", result);
         } catch(Exception e) {
             resultMap.put("error", "true");
