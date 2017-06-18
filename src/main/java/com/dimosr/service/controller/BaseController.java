@@ -2,8 +2,6 @@ package com.dimosr.service.controller;
 
 import com.dimosr.dependency.DependencyConfiguration;
 import com.dimosr.dependency.RemoteService;
-import com.dimosr.monitoring.servicecall.GraphiteMetricsCollector;
-import com.dimosr.service.core.MetricsCollector;
 import com.dimosr.service.core.ServiceCall;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -47,7 +45,8 @@ public class BaseController {
             final int result = remoteServiceCall.call(input);
             resultMap.put("result", result);
         } catch(Exception e) {
-            resultMap.put("error", "true");
+            String message = String.format("%s: %s", e.getClass().toString(), e.getMessage());
+            resultMap.put("result", message);
         }
 
         return getJson(resultMap);

@@ -22,10 +22,17 @@ import java.util.concurrent.TimeUnit;
 public class MainConfiguration {
 
     private static final int CACHE_ENTRIES = 10_000;
+    private static final long TTL_MILLIS = 5000;
 
     private static final int MAX_REQUESTS_PER_SECOND = 50;
     private static final int MAX_RETRIES = 3;
-    private static final Duration TIMEOUT_THRESHOLD = Duration.ofMillis(500);
+    private static final Duration TIMEOUT_THRESHOLD = Duration.ofMillis(1000);
+
+    private static final int CIRCUIT_BREAKER_REQUESTS_WINDOW = 10;
+    private static final int MAX_FAILING_REQUESTS_TO_OPEN = 5;
+    private static final int CONSECUTIVE_SUCCESSFUL_REQUESTS_TO_CLOSE = 3;
+    private static final int OPEN_STATE_DURATION_MILLIS = 10_000;
+
 
     private static final ExecutorService executor = new ThreadPoolExecutor(
             100,
@@ -57,6 +64,7 @@ public class MainConfiguration {
                 .withMonitoring(metricsCollector)
                 .withThrottling(MAX_REQUESTS_PER_SECOND)
                 .withRetrying(true, MAX_RETRIES)
+                .withCircuitBreaker(CIRCUIT_BREAKER_REQUESTS_WINDOW, MAX_FAILING_REQUESTS_TO_OPEN, CONSECUTIVE_SUCCESSFUL_REQUESTS_TO_CLOSE, OPEN_STATE_DURATION_MILLIS)
                 .withTimeouts(TIMEOUT_THRESHOLD, TimeUnit.MILLISECONDS, executor)
                 .build();
     }
@@ -66,6 +74,7 @@ public class MainConfiguration {
         return new GuavaCache<>(
              CacheBuilder.newBuilder()
             .maximumSize(CACHE_ENTRIES)
+            .expireAfterWrite(TTL_MILLIS, TimeUnit.MILLISECONDS)
             .build()
         );
     }

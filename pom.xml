@@ -40,6 +40,12 @@
         </dependency>
 
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>22.0</version>
@@ -97,7 +103,7 @@
         <dependency>
             <groupId>com.github.dimosr</groupId>
             <artifactId>service-call-4j</artifactId>
-            <version>v1</version>
+            <version>v1.1</version>
         </dependency>
 
     </dependencies>

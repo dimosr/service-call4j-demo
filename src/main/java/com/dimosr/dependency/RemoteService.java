@@ -1,7 +1,5 @@
 package com.dimosr.dependency;
 
-import org.springframework.stereotype.Component;
-
 public class RemoteService {
     public DependencyConfiguration configuration;
 
@@ -13,7 +11,7 @@ public class RemoteService {
 
     public int calculateResult(int input) {
         if(configuration.getIntroduceFailures()) {
-            throw new RuntimeException();
+            throw new RuntimeException("Underlying dependency failed");
         }
 
         try {

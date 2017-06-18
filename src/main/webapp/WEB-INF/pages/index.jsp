@@ -1,6 +1,13 @@
 <html>
+    <%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
+
     <head>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <c:url value="/resources/css/loader.css" var="loaderCSS" />
+        <c:url value="/resources/js/loader.js" var="loaderJS" />
+        <c:url value="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" var="jqueryJS" />
+        <link href="${loaderCSS}" rel="stylesheet" />
+        <script src="${loaderJS}"></script>
+        <script src="${jqueryJS}"></script>
     </head>
     <body>
         <h1>ServiceCall-4j Demo Interface</h1>
@@ -22,17 +29,15 @@
         <script>
             $("#request-form").submit(function( event ) {
                     var input = $("#request-input").val();
+                    showLoader();
                     $.ajax({
                         url: "http://localhost:8080/ServiceCall4j-Demo/" + input,
                         dataType:'json',
                     })
                     .done(function( data ) {
+                        hideLoader();
                         $("#request-result").empty();
-                        if(data.hasOwnProperty("error")) {
-                            $("#request-result").append("Error!!");
-                        } else {
-                            $("#request-result").append(data.result);
-                        }
+                        $("#request-result").append(data.result);
                     });
                     event.preventDefault();
             });
@@ -52,6 +57,10 @@
                     })
                     event.preventDefault();
             });
-</script>
+        </script>
+
+        <div id="loader">
+            <div></div>
+        </div>
     </body>
 </html>
