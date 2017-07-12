@@ -12,12 +12,34 @@
     <body>
         <h1>ServiceCall-4j Demo Interface</h1>
 
-        <h2>Sample requests</h2>
+        <h2>Make sample request</h2>
         <form id="request-form">
-              Input: <input id="request-input" type="number">
+              Request Input: <input id="request-input" type="number">
               <input type="submit" value="Make request">
         </form>
-        <div>Result: <span id="request-result"></span></div>
+        <div>Response: <span id="request-result"></span></div>
+
+        <h2>Make a batch of requests</h2>
+        <form id="load-form">
+              Number of requests: <input id="load-input" type="number">
+              With random input between: <input id="load-input-min" type="number"> and <input id="load-input-max" type="number">
+              <input type="submit" value="Create requests">
+        </form>
+        <div>
+            Progress: <span id="load-result"></span>
+        </div>
+
+        <h2>Simulate constant traffic</h2>
+        <form id="rps-form">
+              (RPS) Requests per second: <input id="rps-input" type="number">
+              With random input between: <input id="rps-input-min" type="number"> and <input id="rps-input-max" type="number">
+              <input type="submit" value="Create steady traffic">
+        </form>
+        <div>
+            Current traffic: <span id="rps-result">-</span> requests per second
+            <button id="abort-load" type="button">Abort</button>
+        </div>
+
 
         <h2>Dependency Configuration</h2>
         <form id="configuration-form">
@@ -27,6 +49,8 @@
         </form>
 
         <script>
+            var schedulerID;
+
             $("#request-form").submit(function( event ) {
                     var input = $("#request-input").val();
                     showLoader();
@@ -36,11 +60,45 @@
                     })
                     .done(function( data ) {
                         hideLoader();
-                        $("#request-result").empty();
-                        $("#request-result").append(data.result);
+                        $("#request-result").html(data.result);
                     });
                     event.preventDefault();
             });
+
+            $("#load-form").submit(function( event ) {
+                var loadRequests = $("#load-input").val();
+                var rangeMin = parseInt($("#load-input-min").val());
+                var rangeMax = parseInt($("#load-input-max").val());
+                var completedRequests = 0;
+                for(var i = 0; i < loadRequests; i++) {
+                    var randomInput = getRandomNumberInRange(rangeMin, rangeMax);
+                    $.ajax({
+                        url: "http://localhost:8080/ServiceCall4j-Demo/" + randomInput,
+                        dataType:'json',
+                    })
+                    .done(function( data ) {
+                        completedRequests++;
+                        $("#load-result").html(completedRequests + " of " + loadRequests + " requests completed");
+                    });
+                }
+                event.preventDefault();
+            });
+
+            $("#rps-form").submit(function( event ) {
+                var rpsRate = parseInt($("#rps-input").val());
+                var rangeMin = parseInt($("#rps-input-min").val());
+                var rangeMax = parseInt($("#rps-input-max").val());
+                $("#rps-result").html(rpsRate);
+                schedulerID = setInterval(function() {
+                    executeSteadyRequestsRate(rpsRate, rangeMin, rangeMax);
+                }, 1000);
+                event.preventDefault();
+            });
+
+            $("#abort-load").click(function( event ) {
+                clearInterval(schedulerID);
+                $("#rps-result").html("-");
+            })
 
             $("#configuration-form").submit(function( event ) {
                     var data = {};
@@ -57,6 +115,20 @@
                     })
                     event.preventDefault();
             });
+
+            function executeSteadyRequestsRate(requestsPerSecond, rangeMin, rangeMax) {
+                for(var i = 0; i < requestsPerSecond; i++) {
+                    var randomInput = getRandomNumberInRange(rangeMin, rangeMax);
+                    $.ajax({
+                        url: "http://localhost:8080/ServiceCall4j-Demo/" + randomInput,
+                        dataType:'json',
+                    })
+                }
+            }
+
+            function getRandomNumberInRange(rangeBottom, rangeTop) {
+                return Math.floor( Math.random() * (rangeTop - rangeBottom + 1) ) + rangeBottom;
+            }
         </script>
 
         <div id="loader">

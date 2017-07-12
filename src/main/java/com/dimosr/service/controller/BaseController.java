@@ -40,6 +40,7 @@ public class BaseController {
     @RequestMapping(value = "/{input}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public String calculateResult(@PathVariable int input, ModelMap model) {
+        logger.info("Received request for input: {}", input);
         Map<String, Object> resultMap = new HashMap<>();
         try {
             final int result = remoteServiceCall.call(input);
