@@ -103,7 +103,7 @@
         <dependency>
             <groupId>com.github.dimosr</groupId>
             <artifactId>service-call-4j</artifactId>
-            <version>v1.1</version>
+            <version>v1.2</version>
         </dependency>
 
     </dependencies>

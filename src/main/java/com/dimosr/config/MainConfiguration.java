@@ -59,7 +59,8 @@ public class MainConfiguration {
             final MetricsCollector metricsCollector) {
 
         ServiceCall<Integer, Integer> remoteServiceCall = new RemoteServiceCall(remoteService);
-        return new ServiceCallBuilder<>(remoteServiceCall)
+        final String serviceCallID = "remote-1";
+        return new ServiceCallBuilder<>(remoteServiceCall, serviceCallID)
                 .withCache(cache)
                 .withMonitoring(metricsCollector)
                 .withThrottling(MAX_REQUESTS_PER_SECOND)
