@@ -8,14 +8,6 @@
     <name>ServiceCall4j-Demo Maven Webapp</name>
     <url>http://maven.apache.org</url>
 
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
-
-
     <properties>
         <jdk.version>1.8</jdk.version>
         <spring.version>4.1.1.RELEASE</spring.version>
@@ -102,8 +94,8 @@
 
         <dependency>
             <groupId>com.github.dimosr</groupId>
-            <artifactId>service-call-4j</artifactId>
-            <version>v1.2</version>
+            <artifactId>ServiceCall4j</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
     </dependencies>
