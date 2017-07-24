@@ -1,14 +1,11 @@
 package com.dimosr.config;
 
-import com.dimosr.cache.GuavaCache;
 import com.dimosr.dependency.RemoteService;
 import com.dimosr.dependency.servicecall.RemoteServiceCall;
 import com.dimosr.monitoring.servicecall.GraphiteMetricsCollector;
 import com.dimosr.service.ServiceCallBuilder;
-import com.dimosr.service.core.Cache;
 import com.dimosr.service.core.MetricsCollector;
 import com.dimosr.service.core.ServiceCall;
-import com.google.common.cache.CacheBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class MainConfiguration {
 
     private static final int CACHE_ENTRIES = 10_000;
-    private static final long TTL_MILLIS = 5000;
+    private static final int TTL_MILLIS = 5000;
 
     private static final int MAX_REQUESTS_PER_SECOND = 50;
     private static final int MAX_RETRIES = 3;
@@ -55,29 +52,18 @@ public class MainConfiguration {
     @Bean
     ServiceCall<Integer, Integer> remoteServiceCall(
             final RemoteService remoteService,
-            final Cache<Integer, Integer> cache,
             final MetricsCollector metricsCollector) {
 
         ServiceCall<Integer, Integer> remoteServiceCall = new RemoteServiceCall(remoteService);
         final String serviceCallID = "remote-1";
         return new ServiceCallBuilder<>(remoteServiceCall, serviceCallID)
-                .withCache(cache)
+                .withCache(CACHE_ENTRIES, TTL_MILLIS)
                 .withMonitoring(metricsCollector)
                 .withThrottling(MAX_REQUESTS_PER_SECOND)
                 .withRetrying(true, MAX_RETRIES)
                 .withCircuitBreaker(CIRCUIT_BREAKER_REQUESTS_WINDOW, MAX_FAILING_REQUESTS_TO_OPEN, CONSECUTIVE_SUCCESSFUL_REQUESTS_TO_CLOSE, OPEN_STATE_DURATION_MILLIS)
                 .withTimeouts(TIMEOUT_THRESHOLD, TimeUnit.MILLISECONDS, executor)
                 .build();
-    }
-
-    @Bean
-    public Cache<Integer, Integer> cache() {
-        return new GuavaCache<>(
-             CacheBuilder.newBuilder()
-            .maximumSize(CACHE_ENTRIES)
-            .expireAfterWrite(TTL_MILLIS, TimeUnit.MILLISECONDS)
-            .build()
-        );
     }
 
 }
