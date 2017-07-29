@@ -11,7 +11,12 @@
         </layout>
     </appender>
 
-    <logger name="com.dimosr.service.controller" level="debug" additivity="false">
+    <logger name="com.dimosr.controller" level="debug" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <!-- Enable INFO-level logging of ServiceCall4j library -->
+    <logger name="com.dimosr.service" level="info" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 

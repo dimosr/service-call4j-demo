@@ -1,4 +1,4 @@
-package com.dimosr.service.controller;
+package com.dimosr.controller;
 
 import com.dimosr.dependency.DependencyConfiguration;
 import com.dimosr.dependency.RemoteService;
